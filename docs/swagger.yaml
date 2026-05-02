@@ -9,6 +9,7 @@ servers:
 tags:
   - name: Health
   - name: Auth
+  - name: Course
 paths:
   /api/health:
     get:
@@ -84,6 +85,40 @@ paths:
                     $ref: "#/components/schemas/User"
         "401":
           description: Invalid or missing token
+  /api/courses:
+    post:
+      tags: [Course]
+      summary: Create course for authenticated user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCoursePayload"
+      responses:
+        "201":
+          description: Course created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course:
+                    $ref: "#/components/schemas/Course"
+        "400":
+          description: Invalid or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   securitySchemes:
     bearerAuth:
@@ -137,3 +172,64 @@ components:
         token:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example
+    CreateCoursePayload:
+      type: object
+      required: [name, link, totalWorkloadHours, status, registrationDate]
+      properties:
+        name:
+          type: string
+          example: API Testing Course
+        link:
+          type: string
+          format: uri
+          example: https://example.com/courses/api-testing
+        totalWorkloadHours:
+          type: number
+          example: 40
+        status:
+          type: string
+          example: planned
+        registrationDate:
+          type: string
+          format: date
+          example: 2026-05-02
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 681548ca2d90f5718085d0dc
+        userId:
+          type: string
+          example: 681548ca2d90f5718085d0db
+        name:
+          type: string
+          example: API Testing Course
+        link:
+          type: string
+          example: https://example.com/courses/api-testing
+        totalWorkloadHours:
+          type: number
+          example: 40
+        status:
+          type: string
+          example: planned
+        registrationDate:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Invalid or missing required fields
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        details:
+          type: object
+          properties:
+            fields:
+              type: array
+              items:
+                type: string

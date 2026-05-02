@@ -45,8 +45,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "409":
           description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /api/auth/login:
     post:
       tags: [Auth]
@@ -152,10 +162,10 @@ components:
       properties:
         message:
           type: string
-          example: Invalid credentials
+          example: Invalid or missing required fields
         code:
           type: string
-          example: INVALID_CREDENTIALS
+          example: VALIDATION_ERROR
         details:
           type: object
           properties:

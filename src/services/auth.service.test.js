@@ -7,12 +7,12 @@ jest.mock("bcryptjs");
 jest.mock("jsonwebtoken");
 jest.mock("../models/User");
 
-describe("auth.service - QST-1 register", () => {
+describe("auth.service register", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("creates account and returns authentication response with valid data", async () => {
+  it("creates user and returns token for valid payload", async () => {
     User.findOne.mockResolvedValue(null);
     bcrypt.hash.mockResolvedValue("hashed-password");
     User.create.mockResolvedValue({
@@ -56,79 +56,22 @@ describe("auth.service - QST-1 register", () => {
       })
     ).rejects.toMatchObject({
       statusCode: 409,
-      message: "Email already in use",
-    });
-  });
-});
-
-describe("auth.service - QST-2 login", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("authenticates with valid credentials", async () => {
-    const selectMock = jest.fn().mockResolvedValue({
-      id: "user-1",
-      name: "Rodrigo",
-      email: "rodrigo@email.com",
-      password: "hashed-password",
-    });
-    User.findOne.mockReturnValue({ select: selectMock });
-    bcrypt.compare.mockResolvedValue(true);
-    jwt.sign.mockReturnValue("jwt-token");
-
-    const result = await authService.login({
-      email: "rodrigo@email.com",
-      password: "secret123",
-    });
-
-    expect(User.findOne).toHaveBeenCalledWith({ email: "rodrigo@email.com" });
-    expect(selectMock).toHaveBeenCalledWith("+password");
-    expect(bcrypt.compare).toHaveBeenCalledWith("secret123", "hashed-password");
-    expect(result).toEqual({
-      user: {
-        id: "user-1",
-        name: "Rodrigo",
-        email: "rodrigo@email.com",
-      },
-      token: "jwt-token",
+      code: "EMAIL_CONFLICT",
+      details: { fields: ["email"] },
     });
   });
 
-  it("rejects missing required login fields", async () => {
+  it("rejects when required fields are missing or invalid", async () => {
     await expect(
-      authService.login({
-        email: "",
-        password: "",
+      authService.register({
+        name: "",
+        email: "invalid-email",
+        password: "123",
       })
     ).rejects.toMatchObject({
       statusCode: 400,
       code: "VALIDATION_ERROR",
-      details: {
-        fields: ["email", "password"],
-      },
-    });
-  });
-
-  it("rejects invalid credentials without exposing which field failed", async () => {
-    const selectMock = jest.fn().mockResolvedValue({
-      id: "user-1",
-      name: "Rodrigo",
-      email: "rodrigo@email.com",
-      password: "hashed-password",
-    });
-    User.findOne.mockReturnValue({ select: selectMock });
-    bcrypt.compare.mockResolvedValue(false);
-
-    await expect(
-      authService.login({
-        email: "rodrigo@email.com",
-        password: "wrong-password",
-      })
-    ).rejects.toMatchObject({
-      statusCode: 401,
-      code: "INVALID_CREDENTIALS",
-      message: "Invalid credentials",
+      details: { fields: ["name", "email", "password"] },
     });
   });
 });

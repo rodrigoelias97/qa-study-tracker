@@ -25,21 +25,21 @@ src/
 ## Endpoints iniciais
 
 - `GET /api/health` - Health check
-- `POST /api/auth/register` - Registro de usuario
-- `POST /api/auth/login` - Login com validacao de campos obrigatorios e retorno de token JWT
+- `POST /api/auth/register` - Registro de usuario com validacao de campos obrigatorios
+- `POST /api/auth/login` - Login e obtencao de token JWT
 - `GET /api/auth/me` - Dados do usuario autenticado
 - `GET /docs` - Swagger UI
 
 ### Padrao de erro
 
-Para erros de validacao e autenticacao, a API retorna payload padronizado:
+Para erros de validacao e conflito, a API retorna payload padronizado:
 
 ```json
 {
   "message": "Invalid or missing required fields",
   "code": "VALIDATION_ERROR",
   "details": {
-    "fields": ["email", "password"]
+    "fields": ["name", "email", "password"]
   }
 }
 ```
@@ -81,22 +81,13 @@ Iniciar em modo desenvolvimento (auto-reload):
 npm run dev
 ```
 
-## Testes unitarios
-
 Executar testes unitarios:
 
 ```bash
 npm test
 ```
 
-Cobertura atual dos testes:
-
-- QST-1: fluxo de registro no service (sucesso e e-mail em uso)
-- QST-2: fluxo de login no service (sucesso, campos ausentes e credenciais invalidas)
-- Middleware de erro padronizado
-
 ## Proximos passos sugeridos
 
-- Adicionar validacao de payload (ex: Joi/Zod)
 - Configurar pipeline de CI com GitHub Actions
 - Preparar arquivos para deploy em Vercel

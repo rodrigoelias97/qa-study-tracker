@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: QA Study Tracker API
+  version: 1.0.0
+  description: Initial REST API structure with JWT authentication and MongoDB.
+servers:
+  - url: http://localhost:3000
+    description: Local environment
+tags:
+  - name: Health
+  - name: Auth
+paths:
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Health check endpoint
+      responses:
+        "200":
+          description: Service status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: qa-study-tracker-api
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterPayload"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          description: Email already in use
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginPayload"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid or missing token
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterPayload:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          example: Rodrigo Elias
+        email:
+          type: string
+          format: email
+          example: rodrigo@email.com
+        password:
+          type: string
+          minLength: 6
+          example: secret123
+    LoginPayload:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: rodrigo@email.com
+        password:
+          type: string
+          example: secret123
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 6809a1f9142bdf3d4cbf3f1a
+        name:
+          type: string
+          example: Rodrigo Elias
+        email:
+          type: string
+          example: rodrigo@email.com
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example

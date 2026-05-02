@@ -25,10 +25,24 @@ src/
 ## Endpoints iniciais
 
 - `GET /api/health` - Health check
-- `POST /api/auth/register` - Registro de usuario
+- `POST /api/auth/register` - Registro de usuario com validacao de campos obrigatorios
 - `POST /api/auth/login` - Login e obtencao de token JWT
 - `GET /api/auth/me` - Dados do usuario autenticado
 - `GET /docs` - Swagger UI
+
+### Padrao de erro
+
+Para erros de validacao e conflito, a API retorna payload padronizado:
+
+```json
+{
+  "message": "Invalid or missing required fields",
+  "code": "VALIDATION_ERROR",
+  "details": {
+    "fields": ["name", "email", "password"]
+  }
+}
+```
 
 ## Variaveis de ambiente
 
@@ -67,9 +81,13 @@ Iniciar em modo desenvolvimento (auto-reload):
 npm run dev
 ```
 
+Executar testes unitarios:
+
+```bash
+npm test
+```
+
 ## Proximos passos sugeridos
 
-- Adicionar validacao de payload (ex: Joi/Zod)
-- Criar testes automatizados
 - Configurar pipeline de CI com GitHub Actions
 - Preparar arquivos para deploy em Vercel

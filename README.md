@@ -26,9 +26,23 @@ src/
 
 - `GET /api/health` - Health check
 - `POST /api/auth/register` - Registro de usuario
-- `POST /api/auth/login` - Login e obtencao de token JWT
+- `POST /api/auth/login` - Login com validacao de campos obrigatorios e retorno de token JWT
 - `GET /api/auth/me` - Dados do usuario autenticado
 - `GET /docs` - Swagger UI
+
+### Padrao de erro
+
+Para erros de validacao e autenticacao, a API retorna payload padronizado:
+
+```json
+{
+  "message": "Invalid or missing required fields",
+  "code": "VALIDATION_ERROR",
+  "details": {
+    "fields": ["email", "password"]
+  }
+}
+```
 
 ## Variaveis de ambiente
 

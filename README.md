@@ -81,9 +81,22 @@ Iniciar em modo desenvolvimento (auto-reload):
 npm run dev
 ```
 
+## Testes unitarios
+
+Executar testes unitarios:
+
+```bash
+npm test
+```
+
+Cobertura atual dos testes:
+
+- QST-1: fluxo de registro no service (sucesso e e-mail em uso)
+- QST-2: fluxo de login no service (sucesso, campos ausentes e credenciais invalidas)
+- Middleware de erro padronizado
+
 ## Proximos passos sugeridos
 
 - Adicionar validacao de payload (ex: Joi/Zod)
-- Criar testes automatizados
 - Configurar pipeline de CI com GitHub Actions
 - Preparar arquivos para deploy em Vercel

@@ -9,6 +9,7 @@ servers:
 tags:
   - name: Health
   - name: Auth
+  - name: Courses
 paths:
   /api/health:
     get:
@@ -84,6 +85,43 @@ paths:
                     $ref: "#/components/schemas/User"
         "401":
           description: Invalid or missing token
+  /api/courses/{id}:
+    get:
+      tags: [Courses]
+      summary: Get a course by id for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Course identifier
+      responses:
+        "200":
+          description: Course found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course:
+                    $ref: "#/components/schemas/Course"
+        "401":
+          description: Invalid or missing token
+        "403":
+          description: Course belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   securitySchemes:
     bearerAuth:
@@ -129,6 +167,39 @@ components:
         email:
           type: string
           example: rodrigo@email.com
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 68190f9868e2f8b96e436a09
+        userId:
+          type: string
+          example: 68190f6b68e2f8b96e436a08
+        name:
+          type: string
+          example: API Testing
+        link:
+          type: string
+          example: https://example.com/course
+        totalWorkloadHours:
+          type: number
+          example: 30
+        status:
+          type: string
+          example: planned
+        registrationDate:
+          type: string
+          format: date-time
+          example: "2026-05-02T00:00:00.000Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-05-02T10:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-05-02T10:00:00.000Z"
     AuthResponse:
       type: object
       properties:
@@ -137,3 +208,12 @@ components:
         token:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Course not found
+        code:
+          type: string
+          example: RESOURCE_NOT_FOUND

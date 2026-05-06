@@ -28,7 +28,48 @@ src/
 - `POST /api/auth/register` - Registro de usuario
 - `POST /api/auth/login` - Login e obtencao de token JWT
 - `GET /api/auth/me` - Dados do usuario autenticado
+- `GET /api/courses/:id` - Apresentacao de curso por id (requer autenticacao)
 - `GET /docs` - Swagger UI
+
+### Padrao de resposta do curso
+
+```json
+{
+  "course": {
+    "id": "68190f9868e2f8b96e436a09",
+    "userId": "68190f6b68e2f8b96e436a08",
+    "name": "API Testing",
+    "link": "https://example.com/course",
+    "totalWorkloadHours": 30,
+    "status": "planned",
+    "registrationDate": "2026-05-02T00:00:00.000Z",
+    "createdAt": "2026-05-02T10:00:00.000Z",
+    "updatedAt": "2026-05-02T10:00:00.000Z"
+  }
+}
+```
+
+### Padrao de erro
+
+```json
+{
+  "message": "Course not found",
+  "code": "RESOURCE_NOT_FOUND"
+}
+```
+
+## Testes unitarios
+
+Executar:
+
+```bash
+npm test
+```
+
+Cobertura atual:
+
+- `course.service#getCourseById` (QST-4)
+- `course.controller#getCourseById` (QST-4)
 
 ## Variaveis de ambiente
 
